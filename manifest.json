@@ -1,0 +1,8 @@
+{
+    "name": "MCInfo",
+    "version": "0.0.1",
+    "author": "MoltenCore, Hot Tutorials",
+    "license": "MIT",
+    "description": "Gives a bunch of useful minecraft commands!",
+    "permissions": "ext_api"
+}
