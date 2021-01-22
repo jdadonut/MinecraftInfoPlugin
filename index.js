@@ -3,22 +3,6 @@ const {
 } = require("powercord/entities");
 const Settings = require("./Settings.jsx");
 
-const fetchPlayer = {
-  command: "fetchPlayer",
-  description: "haha get rekd4",
-  usage: "{c}",
-  executor: "this is a dummy string cuz i am bad developer and this is workaround :DDD"
-}
-
-const fetchServer = {
-  command: "fetchServer",
-  description: "haha get rekd4",
-  usage: "{c}",
-  executor: "this is a dummy string cuz i am bad developer and this is workaround :DDD"
-}
-
-
-
 // Import utilities
 const getUUID = require("./utility/getUUID");
 const getRequest = require("./utility/getRequest")
@@ -108,16 +92,49 @@ module.exports = class MCInfo extends Plugin {
           return
         }
         return {
-          commands: [fetchPlayer, fetchServer],
+          commands: [{command: "fetchPlayer"}, {command: "fetchServer"}],
           header: "minecraft SubCommands"
         }
       }
 
     });
+
+    powercord.api.commands.registerCommand({
+      command: "hypixel",
+      description: "Get Hypixel info",
+      usage: "{c} subcommand",
+      executor: async (args) => {
+        const stats = await getRequest(`https://api.hypixel.net/player?key=${getSetting('hypixelApiKey')}&name=${args[1]}`) 
+        console.log(stats)
+
+        switch (args[0]) {
+          case "bedwars":
+              return {
+                send: false,
+                result: {
+                  type: "rich"
+                }
+              }
+            break;
+        
+          default:
+            break;
+        }
+      },
+      autocomplete: (args) => {
+        if (args[0]) {
+          return;
+        }
+        return {
+          commands: [{command: "bedwars"}, {command: "fetchPlayer"}]
+        }
+      } 
+    })
   }
 
   pluginWillUnload() {
     powercord.api.settings.unregisterSettings("mc-info");
     powercord.api.commands.unregisterCommand("minecraft");
+    powercord.api.commands.unregisterCommand("hypixel");
   }
 };
