@@ -1,8 +1,8 @@
 {
     "name": "MCInfo",
     "version": "0.0.1",
-    "author": "MoltenCore, Hot Tutorials",
+    "author": "MoltenCore",
     "license": "MIT",
-    "description": "Gives a bunch of useful minecraft commands!",
+    "description": "Creates a minecraft command, to give info about server or a player!",
     "permissions": "ext_api"
 }

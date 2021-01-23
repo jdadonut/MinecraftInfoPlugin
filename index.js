@@ -1,7 +1,4 @@
-const {
-  Plugin
-} = require("powercord/entities");
-const Settings = require("./Settings.jsx");
+const { Plugin } = require("powercord/entities");
 
 // Import utilities
 const getUUID = require("./utility/getUUID");
@@ -10,15 +7,6 @@ const getRequest = require("./utility/getRequest")
 
 module.exports = class MCInfo extends Plugin {
   startPlugin() {
-    const {
-      getSetting
-    } = powercord.api.settings._fluxProps("mc-info");
-
-    powercord.api.settings.registerSettings("mc-info", {
-      category: "mc-info",
-      label: "MC Info",
-      render: Settings,
-    });
 
     powercord.api.commands.registerCommand({
       command: "minecraft",
@@ -31,7 +19,7 @@ module.exports = class MCInfo extends Plugin {
           console.warn("User of this discord client messed up, sending nukes...")
           return {
             send: false,
-            result: `Well, you did not provide any subcommand Sending info to North Korea`
+            result: `You did not provide a subcommand.`
           }
         }
 
@@ -40,28 +28,39 @@ module.exports = class MCInfo extends Plugin {
         const uuid = await getUUID(args[1]);
         const serverResponse = await getRequest(`https://mcapi.xdefcon.com/server/${args[1]}/full/json`);
 
-        console.log(serverResponse)
-
         switch (args[0]) {
           case "fetchPlayer":
             if(!args[1]) {
-              return 0;
+              return {
+                send: false,
+                result: "You did not provide a player name"
+              }
             }
             if (uuid.uuid == undefined) {
               return {
                 send: false,
-                result: `wtf? that player does not exist like wtf`
+                result: `That player does not exist.`
               }
             }
             return {
               send: false,
               result: {
                 type: "rich",
-                title: `${args[1]}'s profile`,
-                description: `So, ${args[1]}'s uuid is ${uuid.uuid}, 
-                the player looks like [this](https://crafatar.com/renders/body/${uuid.uuid})`,
+                title: `${args[1]}`,
+                description: ``,
+                fields: [{
+                  name: "UUID",
+                  value: `${args[1]}'s UUID is ${uuid.uuid}`,
+                  inline: false
+                },
+                {
+                  name: "Skin",
+                  value: `You can download ${args[1]}'s skin by clicking [here](https://minotar.net/download/${uuid.uuid}), or show it by clicking [here](https://minotar.net/skin/${uuid.uuid})`,
+                  inline: false
+                }
+              ],
                 footer: {
-                  text: `Avatar`,
+                  text: `${uuid.uuid}`,
                   icon_url: `https://crafatar.com/renders/head/${uuid.uuid}`
                 }
               }
@@ -72,15 +71,25 @@ module.exports = class MCInfo extends Plugin {
                 send: false,
                 result: {
                   type: "rich",
-                  title: `${args[1]}`,
-                  description: `So, ${args[1]} is ${serverResponse.serverStatus}`,
+                  title: `${args[1]} is ${serverResponse.serverStatus}`,
+                  description: ``,
+                  fields: [{
+                    name: "Version: ",
+                    value: `${serverResponse.version}`,
+                    inline: false
+                  },
+                  {
+                    name: "Players online",
+                    value: `${serverResponse.players}`,
+                    inline: false
+                  }
+                ],
                   footer: {
-                    text: `Icon`,
+                    text: `Numeric IP: ${serverResponse.serverip}`,
                     icon_url: `${serverResponse.icon}`
                   }
             }
           }
-            break;
           default:
             break;
         }
@@ -90,51 +99,18 @@ module.exports = class MCInfo extends Plugin {
       autocomplete: (args) => {
         if(args[0]) {
           return
-        }
+        } 
         return {
           commands: [{command: "fetchPlayer"}, {command: "fetchServer"}],
-          header: "minecraft SubCommands"
+          header: "minecraft subcommands"
         }
       }
 
     });
 
-    powercord.api.commands.registerCommand({
-      command: "hypixel",
-      description: "Get Hypixel info",
-      usage: "{c} subcommand",
-      executor: async (args) => {
-        const stats = await getRequest(`https://api.hypixel.net/player?key=${getSetting('hypixelApiKey')}&name=${args[1]}`) 
-        console.log(stats)
-
-        switch (args[0]) {
-          case "bedwars":
-              return {
-                send: false,
-                result: {
-                  type: "rich"
-                }
-              }
-            break;
-        
-          default:
-            break;
-        }
-      },
-      autocomplete: (args) => {
-        if (args[0]) {
-          return;
-        }
-        return {
-          commands: [{command: "bedwars"}, {command: "fetchPlayer"}]
-        }
-      } 
-    })
   }
 
   pluginWillUnload() {
-    powercord.api.settings.unregisterSettings("mc-info");
     powercord.api.commands.unregisterCommand("minecraft");
-    powercord.api.commands.unregisterCommand("hypixel");
   }
 };
