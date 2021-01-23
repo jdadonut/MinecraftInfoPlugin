@@ -55,7 +55,7 @@ module.exports = class MCInfo extends Plugin {
                 },
                 {
                   name: "Skin",
-                  value: `You can download ${args[1]}'s skin by clicking [here](https://minotar.net/download/${uuid.uuid}), or show it by clicking [here](https://minotar.net/skin/${uuid.uuid})`,
+                  value: `You can download ${args[1]}'s skin by clicking [here](https://minotar.net/download/${uuid.uuid}), or show it by clicking [here](https://crafatar.com/renders/body/${uuid.uuid})`,
                   inline: false
                 }
               ],
