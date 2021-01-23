@@ -1,17 +1,12 @@
 /* 
     This file exports a function doing a GET request to minecraft-api.com
 */
-const https = require("https");
+const { get } = require("powercord/http")
 
 
-function getUUID(name) {
-    https.get("https://minecraft-api.com/api/uuid/" + name + "/json", (res) => {
-        let data;
-        res.on('data', (chunk) => {
-            data += chunk;
-            return data;
-        })
-    })
+async function getUUID(name) {
+    const uuid = await get("https://minecraft-api.com/api/uuid/" + name + "/json");
+    return uuid.body;
 }
 
 module.exports = getUUID;
