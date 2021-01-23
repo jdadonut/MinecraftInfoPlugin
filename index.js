@@ -16,7 +16,6 @@ module.exports = class MCInfo extends Plugin {
 
         // If we have not got a subcommand display an error message
         if (!args[0]) {
-          console.warn("User of this discord client messed up, sending nukes...")
           return {
             send: false,
             result: `You did not provide a subcommand.`
